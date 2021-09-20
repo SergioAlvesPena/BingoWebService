@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BingoWS.Data;
+using BingoWS.Repositories;
 
 namespace BingoWS.Controllers
 {
@@ -15,10 +17,12 @@ namespace BingoWS.Controllers
     public class BingoController : ControllerBase
     {
         public static List<int> ChosenNumbers = new List<int>();
+        private readonly CartelaRepository _repository;
         Random random = new Random();
 
-        public BingoController()
+        public BingoController(CartelaRepository repository)
         {
+            _repository = repository;
         }
 
         [HttpGet("Card")]
@@ -45,20 +49,53 @@ namespace BingoWS.Controllers
                 }
                 cartela.CartelaDeNumeros.Add(linha);
             }
-            cartela.Id = random.Next(1, 100);
+            cartela.Id = Guid.NewGuid();
+
+            _repository.Create(cartela);
+
 
             return JsonSerializer.Serialize(cartela);
         }
 
-        [HttpGet("GetNumber")]
-        public ActionResult<int> GetRandomNumber() 
+        [HttpGet("Rodada")]
+        public ActionResult<Guid> Rodada() 
         {
-            int number = random.Next(1, 100);
-            while (ChosenNumbers.Contains(number)) 
+            int numero = random.Next(1, 100);
+            while (ChosenNumbers.Contains(numero)) 
             {
-                number = random.Next(1, 100);
+                numero = random.Next(1, 100);
             }
-            return number;
+
+            var cartelas = _repository.GetAll().Result;
+
+            foreach (Cartela cartela in cartelas) 
+            {
+                foreach (List<int> linha in cartela.CartelaDeNumeros) 
+                {
+                    if (linha.Contains(numero)) 
+                    {
+                        int indice = linha.IndexOf(numero);
+                        linha[indice] = 0;
+                        _repository.Update(cartela);
+                    }
+
+                }
+            }
+
+            var vencedor = _repository.GetAll().Result;
+
+            foreach (Cartela jogador in vencedor) 
+            {
+                foreach (List<int> linha in jogador.CartelaDeNumeros) 
+                {
+                    if (!linha.Any(o => o != linha[0])) 
+                    {
+                        return jogador.Id;
+                    }
+                }
+            }
+
+            return Guid.Empty;
         }
     }
 }

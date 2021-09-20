@@ -12,7 +12,7 @@ namespace BingoWS.IRepositories
 
         Task Update(Cartela cartela);
 
-        Task<Cartela> GetById(int id);
+        Task<Cartela> GetById(Guid id);
 
         Task<IEnumerable<Cartela>> GetAll();
     }

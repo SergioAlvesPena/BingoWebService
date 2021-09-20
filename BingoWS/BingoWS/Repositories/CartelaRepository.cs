@@ -2,6 +2,7 @@
 using BingoWS.Entities;
 using BingoWS.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace BingoWS.Repositories
             return await _context.Cartelas.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Cartela> GetById(int id)
+        public async Task<Cartela> GetById(Guid id)
         {
             return await _context.Cartelas.FirstOrDefaultAsync(x => x.Id == id);
         }
