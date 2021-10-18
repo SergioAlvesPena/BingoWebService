@@ -1,0 +1,16 @@
+<app-nav></app-nav>
+
+
+<div class="list-group">
+  <a class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+    <div class="d-flex gap-2 w-100 justify-content-between">
+      <div>
+        <div style="margin: 100px;" >
+          <ul class="list-group" style="width: 100%;">
+            <li *ngFor = 'let number of cartelas.CartelaDeNumeros' class="list-group-item" style="font-size: 40px;">{{number}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

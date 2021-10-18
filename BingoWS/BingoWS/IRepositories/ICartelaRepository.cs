@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BingoWS.IRepositories
 {
-    interface ICartelaRepository
+    public interface ICartelaRepository
     {
         Task Create(Cartela cartela);
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BingoWS.Data;
-using BingoWS.Repositories;
+using BingoWS.IRepositories;
 
 namespace BingoWS.Controllers
 {
@@ -17,10 +17,10 @@ namespace BingoWS.Controllers
     public class BingoController : ControllerBase
     {
         public static List<int> ChosenNumbers = new List<int>();
-        private readonly CartelaRepository _repository;
+        private readonly ICartelaRepository _repository;
         Random random = new Random();
 
-        public BingoController(CartelaRepository repository)
+        public BingoController(ICartelaRepository repository)
         {
             _repository = repository;
         }
@@ -58,7 +58,7 @@ namespace BingoWS.Controllers
         }
 
         [HttpGet("Rodada")]
-        public ActionResult<Guid> Rodada() 
+        public ActionResult<int> Rodada() 
         {
             int numero = random.Next(1, 100);
             while (ChosenNumbers.Contains(numero)) 
@@ -84,18 +84,7 @@ namespace BingoWS.Controllers
 
             var vencedor = _repository.GetAll().Result;
 
-            foreach (Cartela jogador in vencedor) 
-            {
-                foreach (List<int> linha in jogador.CartelaDeNumeros) 
-                {
-                    if (!linha.Any(o => o != linha[0])) 
-                    {
-                        return jogador.Id;
-                    }
-                }
-            }
-
-            return Guid.Empty;
+            return Ok(numero);
         }
     }
 }

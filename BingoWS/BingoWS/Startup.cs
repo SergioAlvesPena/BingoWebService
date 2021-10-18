@@ -32,6 +32,7 @@ namespace BingoWS
         {
 
             services.AddControllers();
+            services.AddCors();
             services.AddDbContext<DataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("connectionString")));
             services.AddScoped<ICartelaRepository, CartelaRepository>();
             services.AddSwaggerGen(c =>
@@ -53,6 +54,8 @@ namespace BingoWS
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
             app.UseAuthorization();
 
